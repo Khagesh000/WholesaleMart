@@ -1,9 +1,9 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../assets/css/HeaderCss/Header.css';
-import LocationSearch from '../components/Headersplit/LocationSearch';
-import ProductSearch from '../components/Headersplit/ProductSearch';
-import NavLinks from '../components/Headersplit/NavLinks';
+import '../../assets/css/HeaderCss/Header.css';
+import LocationSearch from './LocationSearch';
+import ProductSearch from './ProductSearch';
+import NavLinks from './NavLinks';
 
 export default function Header() {
   return (

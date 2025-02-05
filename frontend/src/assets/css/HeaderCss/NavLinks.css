@@ -1,156 +1,156 @@
 /* Nav Links Container */
 .header-nav-list {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  gap: 20px; /* Space between nav links */
-}
-
-/* Nav Link */
-.header-link,
-.header-dropdown-toggle {
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  color: white;
-  text-decoration: none;
-  padding: 8px 12px;
-  transition: 0.3s ease-in-out;
-  display: inline-block;
-}
-
-/* Hover Effect */
-.header-link:hover,
-.header-dropdown-toggle:hover {
-  color: #ffebcd; /* Light cream hover effect */
-}
-
-/* Nav Icons */
-.nav-icon {
-  font-size: 18px;
-  margin-right: 8px; /* Space between icon and text */
-}
-
-/* Dropdown */
-.header-dropdown-menu {
-  background-color: white;
-  border-radius: 5px;
-}
-
-.header-dropdown-item {
-  font-size: 14px;
-  color: black;
-}
-
-.header-dropdown-item:hover {
-  background-color: #f4f4f4;
-}
-
-/* Login Button */
-.header-login {
-  padding: 8px 14px;
-  font-size: 16px;
-  border-radius: 5px;
-  background-color: #ffcc00;
-  color: black;
-  border: none;
-  transition: 0.3s ease-in-out;
-}
-
-.header-login:hover {
-  background-color: #ff9900;
-}
-
-/* Responsive */
-
-/* Medium Screens */
-@media (max-width: 1024px) {
-  .header-nav-list {
-    gap: 15px;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 20px; /* Space between nav links */
   }
+  
+  /* Nav Link */
   .header-link,
   .header-dropdown-toggle {
-    font-size: 14px;
-  }
-  .nav-icon {
     font-size: 16px;
-  }
-}
-
-/* Small Screens (480px - 768px) */
-@media (max-width: 768px) {
-  /* Nav Links Container */
-  .header-nav-list {
-    display: flex;
-    gap: 12px;  /* Space between nav links */
-    flex-wrap: nowrap;  /* Ensure the items stay in one row */
-    justify-content: flex-start;  /* Align items to the left */
-    overflow-x: auto;  /* Enable horizontal scrolling */
-    -webkit-overflow-scrolling: touch;  /* Smooth scrolling on iOS */
-    padding: 0 10px;  /* Optional: Adds some padding on left and right */
-    width: 100%;  /* Full width */
-    white-space: nowrap;  /* Prevent wrapping of items */
-    position: relative; /* To position the arrows */
-  }
-
-  /* Left Scroll Arrow */
-  .scroll-arrows {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    display: none;  /* Initially hide arrows */
-  }
-
-  /* Left Scroll Arrow Button */
-  .scroll-button.left {
-    left: 10px;  /* Adjust this value to position the left arrow */
-    background-color: rgba(0, 0, 0, 0.5); /* Dark background for visibility */
+    font-family: 'Poppins', sans-serif;
     color: white;
-    font-size: 24px;
-    padding: 8px;
-    border-radius: 50%;
-    cursor: pointer;
+    text-decoration: none;
+    padding: 8px 12px;
+    transition: 0.3s ease-in-out;
+    display: inline-block;
   }
-
-  /* Right Scroll Arrow Button */
-  .scroll-button.right {
-    right: 10px;  /* Adjust this value to position the right arrow */
-    background-color: rgba(0, 0, 0, 0.5); /* Dark background for visibility */
-    color: white;
-    font-size: 24px;
-    padding: 8px;
-    border-radius: 50%;
-    cursor: pointer;
+  
+  /* Hover Effect */
+  .header-link:hover,
+  .header-dropdown-toggle:hover {
+    color: #ffebcd; /* Light cream hover effect */
   }
-
-  /* Make arrows visible only on small screens and only when scrolling */
-  .header-nav-list::-webkit-scrollbar {
-    height: 8px;  /* Height of the horizontal scrollbar */
+  
+  /* Nav Icons */
+  .nav-icon {
+    font-size: 18px;
+    margin-right: 8px; /* Space between icon and text */
   }
-
-  .header-nav-list::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 4px;
+  
+  /* Dropdown */
+  .header-dropdown-menu {
+    background-color: white;
+    border-radius: 5px;
   }
-
-  .header-nav-list::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
+  
+  .header-dropdown-item {
+    font-size: 14px;
+    color: black;
   }
-
-  /* Show the arrows when the user starts scrolling */
-  .header-nav-list:hover .scroll-arrows {
-    display: flex; /* Display the arrows on hover */
+  
+  .header-dropdown-item:hover {
+    background-color: #f4f4f4;
   }
-
-  /* Ensure the arrows are only visible on small screens */
-  .scroll-arrows {
-    display: flex;
+  
+  /* Login Button */
+  .header-login {
+    padding: 8px 14px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #ffcc00;
+    color: black;
+    border: none;
+    transition: 0.3s ease-in-out;
   }
-}
-
-
-
-
-
+  
+  .header-login:hover {
+    background-color: #ff9900;
+  }
+  
+  /* Responsive */
+  
+  /* Medium Screens */
+  @media (max-width: 1024px) {
+    .header-nav-list {
+      gap: 15px;
+    }
+    .header-link,
+    .header-dropdown-toggle {
+      font-size: 14px;
+    }
+    .nav-icon {
+      font-size: 16px;
+    }
+  }
+  
+  /* Small Screens (480px - 768px) */
+  @media (max-width: 768px) {
+    /* Nav Links Container */
+    .header-nav-list {
+      display: flex;
+      gap: 12px;  /* Space between nav links */
+      flex-wrap: nowrap;  /* Ensure the items stay in one row */
+      justify-content: flex-start;  /* Align items to the left */
+      overflow-x: auto;  /* Enable horizontal scrolling */
+      -webkit-overflow-scrolling: touch;  /* Smooth scrolling on iOS */
+      padding: 0 10px;  /* Optional: Adds some padding on left and right */
+      width: 100%;  /* Full width */
+      white-space: nowrap;  /* Prevent wrapping of items */
+      position: relative; /* To position the arrows */
+    }
+  
+    /* Left Scroll Arrow */
+    .scroll-arrows {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: none;  /* Initially hide arrows */
+    }
+  
+    /* Left Scroll Arrow Button */
+    .scroll-button.left {
+      left: 10px;  /* Adjust this value to position the left arrow */
+      background-color: rgba(0, 0, 0, 0.5); /* Dark background for visibility */
+      color: white;
+      font-size: 24px;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  
+    /* Right Scroll Arrow Button */
+    .scroll-button.right {
+      right: 10px;  /* Adjust this value to position the right arrow */
+      background-color: rgba(0, 0, 0, 0.5); /* Dark background for visibility */
+      color: white;
+      font-size: 24px;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  
+    /* Make arrows visible only on small screens and only when scrolling */
+    .header-nav-list::-webkit-scrollbar {
+      height: 8px;  /* Height of the horizontal scrollbar */
+    }
+  
+    .header-nav-list::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 4px;
+    }
+  
+    .header-nav-list::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+  
+    /* Show the arrows when the user starts scrolling */
+    .header-nav-list:hover .scroll-arrows {
+      display: flex; /* Display the arrows on hover */
+    }
+  
+    /* Ensure the arrows are only visible on small screens */
+    .scroll-arrows {
+      display: flex;
+    }
+  }
+  
+  
+  
+  
+  
