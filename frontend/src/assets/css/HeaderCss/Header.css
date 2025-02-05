@@ -1,0 +1,112 @@
+header {
+  background: linear-gradient(135deg, #705957, #dc4352);
+  padding: 10px 20px;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: column; /* Stack the rows vertically */
+  align-items: center; /* Center all items */
+  justify-content: center;
+  width: 100%;
+}
+
+/* Left side: Logo, Location, Search */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  justify-content: center;
+  margin-top: 1%;
+}
+
+/* Logo */
+.header-logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Right side: Navigation Links */
+.header-right {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 1%;
+}
+
+/* 🖥 Large Screens (1200px and above) */
+@media (max-width: 1200px) {
+  .header-logo {
+    font-size: 22px;
+  }
+  .header-right {
+    gap: 12px;
+    margin-top: 30px;
+  }
+}
+
+/* 💻 Medium Screens (1024px - 1199px) */
+@media (max-width: 1024px) {
+  .header-left {
+    gap: 10px;
+  }
+  .header-logo {
+    font-size: 20px;
+  }
+  .header-right {
+    gap: 10px; /* Space between the search input and button */
+    justify-content: center; /* Center the items */
+    margin-top: 10px; /* Small space between rows */
+  }
+}
+
+
+/* 📱 Tablets (768px - 1023px) */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* First row */
+  .header-left {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Second row */
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .header-logo {
+    font-size: 18px;
+  }
+}
+
+/* 📱 Small Screens (480px - 767px) */
+@media (max-width: 767px) {
+  .header-left, .header-right {
+    gap: 8px;
+  }
+  .header-logo {
+    font-size: 16px;
+  }
+}
+
+/* 📱 Extra Small Screens (Below 480px) */
+@media (max-width: 480px) {
+  .header-left, .header-right {
+    flex-direction: column;
+    align-items: center;
+  }
+  .header-logo {
+    font-size: 14px;
+  }
+}
