@@ -23,4 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+api/firebase-credentials.json
+
+
 .vercel

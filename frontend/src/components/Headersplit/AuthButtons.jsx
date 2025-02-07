@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaGoogle } from "react-icons/fa"; // Import Google icon
+import { FaGoogle } from "react-icons/fa";
+import { auth, provider, signInWithPopup } from "./firebase"; // Import Firebase
 
 export default function AuthButtons() {
   const [showPopup, setShowPopup] = useState(false);
@@ -9,73 +10,61 @@ export default function AuthButtons() {
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // 🔹 Loading state for Send OTP button
+  const [verifying, setVerifying] = useState(false); // 🔹 Loading state for Verify OTP button
   const navigate = useNavigate();
 
-  // Load Google API
-  useEffect(() => {
-    const loadGoogleAPI = () => {
-      const script = document.createElement("script");
-      script.src = "https://accounts.google.com/gsi/client";
-      script.async = true;
-      script.onload = () => {
-        window.google.accounts.id.initialize({
-          client_id: "YOUR_GOOGLE_CLIENT_ID", // Replace with your actual Client ID
-          callback: handleGoogleLogin,
-        });
-      };
-      document.body.appendChild(script);
-    };
-    loadGoogleAPI();
-  }, []);
-
-  // Google Sign-In Callback
-  const handleGoogleLogin = async (response) => {
+  // ✅ Google Login
+  const handleGoogleLogin = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/google-login/", {
-        token: response.credential,
-      });
-      if (res.data.status === "success") {
-        navigate("/dashboard");
+      const result = await signInWithPopup(auth, provider);
+      const token = await result.user.getIdToken();
+
+      const res = await axios.post("http://127.0.0.1:8000/api/google-login/", { token });
+
+      if (res.data.status === "Success") {
+        localStorage.setItem("user", JSON.stringify(res.data));
+        navigate("/login");
       } else {
         setError("Google login failed.");
       }
     } catch (error) {
-      setError("Google authentication error.");
+      console.error("Google Auth Error:", error);
+      setError("Google authentication failed.");
     }
   };
 
-  // Send OTP to Backend
+  // ✅ Send OTP
   const handleSendOtp = async () => {
-    if (email.includes("@") && email.includes(".")) {
-      try {
-        await axios.post("http://127.0.0.1:8000/api/send-otp/", { email });
-        setIsOtpSent(true);
-        setError("");
-      } catch (error) {
-        setError("Failed to send OTP. Try again.");
-      }
-    } else {
-      setError("Please enter a valid email.");
+    setLoading(true); // Show loading dots
+    setError(""); // Clear previous errors
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/send-otp/", { email });
+      setIsOtpSent(true);
+    } catch (error) {
+      setError("Error sending OTP.");
+    } finally {
+      setLoading(false); // Hide loading dots
     }
   };
 
-  // Verify OTP with Backend
+  // ✅ Verify OTP
   const handleVerifyOtp = async () => {
-    if (otp.length === 6) {
-      try {
-        const res = await axios.post("http://127.0.0.1:8000/api/verify-otp/", { email, otp });
+    setVerifying(true); // Show loading dots
+    setError(""); // Clear previous errors
 
-        if (res.data.status === "Verified") {
-          setShowPopup(false);
-          navigate("/dashboard");
-        } else {
-          setError("Invalid OTP. Try again.");
-        }
-      } catch (error) {
-        setError("OTP verification failed.");
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/verify-otp/", { email, otp });
+      if (res.data.status === "Verified") {
+        navigate("/login");
+      } else {
+        setError("❌ OTP is invalid! Please try again."); // 🔹 Attractive error message
       }
-    } else {
-      setError("Enter a valid 6-digit OTP.");
+    } catch (error) {
+      setError("❌ OTP verification failed!");
+    } finally {
+      setVerifying(false); // Hide loading dots
     }
   };
 
@@ -114,30 +103,30 @@ export default function AuthButtons() {
                 onChange={(e) => setOtp(e.target.value)}
                 maxLength="6"
               />
-              <button className="authbuttons-resend-btn" onClick={handleSendOtp}>
+              <button className="authbuttons-resend-btn" onClick={handleSendOtp} disabled={loading}>
                 Resend OTP
               </button>
             </>
           )}
 
           {!isOtpSent ? (
-            <button className="authbuttons-send-btn" onClick={handleSendOtp}>
-              Send OTP
+            <button className="authbuttons-send-btn" onClick={handleSendOtp} disabled={loading}>
+              {loading ? "Sending OTP..." : "Send OTP"}
             </button>
           ) : (
-            <button className="authbuttons-verify-btn" onClick={handleVerifyOtp}>
-              Verify OTP
+            <button className="authbuttons-verify-btn" onClick={handleVerifyOtp} disabled={verifying}>
+              {verifying ? "Verifying OTP..." : "Verify OTP"}
             </button>
           )}
 
-          {/* Google Sign-In Button with Icon */}
+          {/* 🔹 Google Sign-In Button with Firebase */}
           <div className="google-signin">
-            <button className="google-btn" onClick={() => window.google.accounts.id.prompt()}>
+            <button className="google-btn" onClick={handleGoogleLogin}>
               <FaGoogle className="google-icon" /> Sign Up with Google
             </button>
           </div>
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p className="auth-error">{error}</p>}
         </div>
       )}
     </div>
