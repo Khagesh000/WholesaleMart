@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaGoogle } from "react-icons/fa";
@@ -10,22 +10,48 @@ export default function AuthButtons() {
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // 🔹 Loading state for Send OTP button
-  const [verifying, setVerifying] = useState(false); // 🔹 Loading state for Verify OTP button
+  const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Google Login
+
+
+
+  axios.defaults.withCredentials = true; // ✅ This ensures session cookies are sent
+
+const checkSession = async () => {
+    try {
+        const res = await axios.get("http://127.0.0.1:8000/api/check-session/");
+        console.log("Session Check Response:", res.data);
+        if (res.data.status === "Authenticated") {
+            navigate("/login");
+        }
+    } catch (error) {
+        console.error("Session Error:", error);
+    }
+};
+
+useEffect(() => {
+    checkSession();
+}, []);
+
+
+  // ✅ Google Login with Console Log
   const handleGoogleLogin = async () => {
     try {
+      console.log("Google Sign-In started...");
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
+      console.log("Google Token:", token);
 
       const res = await axios.post("http://127.0.0.1:8000/api/google-login/", { token });
 
       if (res.data.status === "Success") {
+        console.log("Google Login Success:", res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
         navigate("/login");
       } else {
+        console.error("Google Login Failed:", res.data.message);
         setError("Google login failed.");
       }
     } catch (error) {
@@ -34,37 +60,47 @@ export default function AuthButtons() {
     }
   };
 
-  // ✅ Send OTP
+  // ✅ Send OTP with Console Log
   const handleSendOtp = async () => {
-    setLoading(true); // Show loading dots
-    setError(""); // Clear previous errors
+    setLoading(true);
+    setError("");
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/send-otp/", { email });
+      console.log("Sending OTP to:", email);
+      const response = await axios.post("http://127.0.0.1:8000/api/send-otp/", { email });
+      console.log("OTP Sent Response:", response.data);
+
       setIsOtpSent(true);
     } catch (error) {
+      console.error("Error Sending OTP:", error);
       setError("Error sending OTP.");
     } finally {
-      setLoading(false); // Hide loading dots
+      setLoading(false);
     }
   };
 
-  // ✅ Verify OTP
+  // ✅ Verify OTP with Console Log
   const handleVerifyOtp = async () => {
-    setVerifying(true); // Show loading dots
-    setError(""); // Clear previous errors
+    setVerifying(true);
+    setError("");
 
     try {
+      console.log("Verifying OTP for:", email);
       const res = await axios.post("http://127.0.0.1:8000/api/verify-otp/", { email, otp });
+      console.log("OTP Verification Response:", res.data);
+
       if (res.data.status === "Verified") {
+        console.log("✅ OTP Verified Successfully!");
         navigate("/login");
       } else {
-        setError("❌ OTP is invalid! Please try again."); // 🔹 Attractive error message
+        console.error("❌ OTP is invalid!");
+        setError("❌ OTP is invalid! Please try again.");
       }
     } catch (error) {
+      console.error("OTP Verification Error:", error);
       setError("❌ OTP verification failed!");
     } finally {
-      setVerifying(false); // Hide loading dots
+      setVerifying(false);
     }
   };
 

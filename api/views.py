@@ -6,27 +6,29 @@ from firebase_admin import auth, credentials
 from django.core.mail import send_mail
 from django.core.cache import cache
 from django.conf import settings
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.authentication import SessionAuthentication
 
 logger = logging.getLogger(__name__)
 
-# ✅ Get the BASE_DIR dynamically
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# ✅ Use `os.path.join` for a correct file path
 FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "api", "firebase-credentials.json")
 
-# ✅ Ensure the file exists before initializing Firebase
 if not os.path.exists(FIREBASE_CREDENTIALS_PATH):
     raise FileNotFoundError(f"Firebase credentials file not found: {FIREBASE_CREDENTIALS_PATH}")
 
-# ✅ Initialize Firebase Admin SDK
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 
 
 class GoogleLoginView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
+
     def post(self, request):
         token = request.data.get("token")
 
@@ -36,21 +38,27 @@ class GoogleLoginView(APIView):
         try:
             decoded_token = auth.verify_id_token(token)
             email = decoded_token.get("email")
-            user_id = decoded_token.get("uid")  # Get Firebase UID
-            
-            # 🔹 Add user creation logic if not exists
-            from django.contrib.auth.models import User
+            user_id = decoded_token.get("uid")
+
             user, created = User.objects.get_or_create(username=email, email=email)
 
-            return Response({"status": "Success", "email": email, "user_id": user_id})
+            # ✅ Log in user using Django's session system
+            request.session["user_id"] = user.id
+            request.session["email"] = email
+            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
+            login(request, user)
+
+            return Response({"status": "Success", "email": email, "user_id": user.id})
 
         except Exception as e:
-            logger.error(f"Google Login Error: {str(e)}")
+            logger.error(f"Google Login Failed: {str(e)}")
             return Response({"status": "Failed", "message": "Invalid Google token"}, status=400)
 
 
-# ✅ Send OTP via Email
 class SendOTPView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
+
     def post(self, request):
         email = request.data.get("email")
 
@@ -58,7 +66,9 @@ class SendOTPView(APIView):
             return Response({"status": "Failed", "message": "Email is required"}, status=400)
 
         otp = random.randint(100000, 999999)
-        cache.set(email, otp, timeout=300)
+        cache.set(email, otp, timeout=300)  # OTP valid for 5 minutes
+
+        logger.info(f"OTP {otp} sent to {email}")
 
         try:
             send_mail(
@@ -75,8 +85,10 @@ class SendOTPView(APIView):
             return Response({"status": "Failed", "message": "Error sending OTP"}, status=500)
 
 
-# ✅ Verify OTP
 class VerifyOTPView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
+
     def post(self, request):
         email = request.data.get("email")
         otp_entered = request.data.get("otp")
@@ -87,6 +99,40 @@ class VerifyOTPView(APIView):
         otp_stored = cache.get(email)
 
         if otp_stored and str(otp_stored) == str(otp_entered):
+            logger.info(f"✅ OTP Verified Successfully for {email}")
+
+            user, created = User.objects.get_or_create(username=email, email=email)
+            login(request, user)
+
+            # Set session with long expiry
+            request.session["user_email"] = email
+            request.session["authenticated"] = True
+            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
+
             return Response({"status": "Verified", "message": "OTP is correct"})
+
         else:
+            logger.warning(f"❌ Invalid OTP Attempt for {email}")
             return Response({"status": "Failed", "message": "Invalid OTP"}, status=400)
+
+
+class LogoutView(APIView):
+    authentication_classes = [SessionAuthentication]
+
+    def post(self, request):
+        logout(request)
+        request.session.flush()  # Clear all session data
+        return Response({"status": "Success", "message": "Logged out successfully"})
+
+
+class CheckSessionView(APIView):
+    authentication_classes = [SessionAuthentication]
+
+    def get(self, request):
+        user_id = request.session.get("user_id")
+        email = request.session.get("email")
+
+        if user_id:
+            return Response({"status": "Authenticated", "user_id": user_id, "email": email})
+        
+        return Response({"status": "Unauthorized"}, status=401)
