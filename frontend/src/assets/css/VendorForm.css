@@ -1,0 +1,82 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+.vendorform-container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+}
+
+.vendorform-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #c60f21;
+  margin-bottom: 20px;
+}
+
+.vendorform-step h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.vendorform-input, .vendorform-textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+}
+
+.vendorform-btn {
+  background: #c60f21;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.vendorform-btn:hover {
+  background: #a00d1d;
+}
+
+.vendorform-btn-back {
+  background: #6c757d;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.vendorform-btn-back:hover {
+  background: #545b62;
+}
+
+.vendorform-submit-btn {
+  background: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.vendorform-submit-btn:hover {
+  background: #218838;
+}

@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.vendorregistration-navbar {
+    background: linear-gradient(135deg, #705957, #c60f21);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    
+}
+
+.vendorregistration-left {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.vendorregistration-right .vendorregistration-home-btn {
+    background-color: #c60f21;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.vendorregistration-right .vendorregistration-home-btn:hover {
+    background-color: #9e0c1a;
+}

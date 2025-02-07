@@ -5,6 +5,8 @@ import LocationInput from "../components/Headersplit/LocationInput";
 import SearchBar from "../components/Headersplit/SearchBar";
 import NavLinks from "../components/Headersplit/NavLinks";
 import AuthButtons from "../components/Headersplit/AuthButtons";
+
+import "../assets/css/AuthButtons.css";
 import "../assets/css/Header.css"; // Same external CSS file
 
 export default function Header() {
