@@ -17,23 +17,39 @@ export default function AuthButtons() {
 
 
 
-  axios.defaults.withCredentials = true; // ✅ This ensures session cookies are sent
+axios.defaults.withCredentials = true; // ✅ This ensures session cookies are sent
 
 const checkSession = async () => {
     try {
         const res = await axios.get("http://127.0.0.1:8000/api/check-session/");
         console.log("Session Check Response:", res.data);
         if (res.data.status === "Authenticated") {
+            localStorage.setItem("user", JSON.stringify(res.data));
             navigate("/login");
+        } else {
+          localStorage.removeItem("user"); // ❌ Clear storage if not authenticated
+          navigate("/login");
         }
     } catch (error) {
         console.error("Session Error:", error);
+        localStorage.removeItem("user"); // ❌ Clear session on error
+        navigate("/login");
     }
 };
 
 useEffect(() => {
-    checkSession();
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    console.log("🔄 User found in localStorage. Redirecting to /login");
+      // ✅ If user is already logged in, redirect to dashboard
+      navigate("/login");
+  } else {
+      console.log("🔄 Checking Django session...");
+      checkSession(); // ✅ Otherwise, check Django session
+  }
 }, []);
+
 
 
   // ✅ Google Login with Console Log
@@ -59,6 +75,18 @@ useEffect(() => {
       setError("Google authentication failed.");
     }
   };
+
+  const handleLogout = () => {
+    axios.post("http://127.0.0.1:8000/api/logout/")
+        .then(() => {
+            localStorage.removeItem("user"); // ❌ Clear storage
+            console.log("✅ User logged out. Redirecting to /login");
+            navigate("/login"); // 🔄 Redirect to login
+        })
+        .catch(error => console.error("🚨 Logout Error:", error));
+};
+
+
 
   // ✅ Send OTP with Console Log
   const handleSendOtp = async () => {
@@ -91,7 +119,7 @@ useEffect(() => {
 
       if (res.data.status === "Verified") {
         console.log("✅ OTP Verified Successfully!");
-        navigate("/login");
+        navigate("/user-login");
       } else {
         console.error("❌ OTP is invalid!");
         setError("❌ OTP is invalid! Please try again.");
@@ -107,13 +135,21 @@ useEffect(() => {
   return (
     <div className="authbuttons-container">
       <div className="authbuttons-wrapper">
-        <button className="signup-btn" onClick={() => navigate("/vendor-registration")}>
+        <button className="signup-btn" onClick={() => navigate("/vender-dashboard")}>
           Vendor
         </button>
 
-        <button className="login-btn" onClick={() => setShowPopup(true)}>
-          Login
-        </button>
+        {localStorage.getItem("user") ? (
+          // ✅ Show Logout button when user is logged in
+          <button className="login-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        ) : (
+          // 🔄 Show Login button when user is NOT logged in
+          <button className="login-btn" onClick={() => setShowPopup(true)}>
+            Login
+          </button>
+        )}
       </div>
 
       {showPopup && (

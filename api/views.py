@@ -24,9 +24,13 @@ if not os.path.exists(FIREBASE_CREDENTIALS_PATH):
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 
+class CSRFExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return  
+    
 
 class GoogleLoginView(APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -36,19 +40,26 @@ class GoogleLoginView(APIView):
             return Response({"status": "Failed", "message": "Token is required"}, status=400)
 
         try:
-            decoded_token = auth.verify_id_token(token)
+            decoded_token = auth.verify_id_token(token, clock_skew_seconds=5)
             email = decoded_token.get("email")
-            user_id = decoded_token.get("uid")
-
             user, created = User.objects.get_or_create(username=email, email=email)
+
+
 
             # ✅ Log in user using Django's session system
             request.session["user_id"] = user.id
             request.session["email"] = email
             request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
             login(request, user)
+            
+            logger.info(f"✅ Google Login Success: User {email} logged in with session {request.session.session_key}")
 
-            return Response({"status": "Success", "email": email, "user_id": user.id})
+            return Response({
+                "status": "Success",
+                "email": email,
+                "user_id": user.id,
+                "session_key": request.session.session_key  # Debugging session
+            })
 
         except Exception as e:
             logger.error(f"Google Login Failed: {str(e)}")
@@ -56,7 +67,7 @@ class GoogleLoginView(APIView):
 
 
 class SendOTPView(APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -117,7 +128,7 @@ class VerifyOTPView(APIView):
 
 
 class LogoutView(APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
 
     def post(self, request):
         logout(request)
@@ -126,13 +137,15 @@ class LogoutView(APIView):
 
 
 class CheckSessionView(APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
 
     def get(self, request):
         user_id = request.session.get("user_id")
         email = request.session.get("email")
 
         if user_id:
+            logger.info(f"✅ Active session found for {email} (User ID: {user_id})")
             return Response({"status": "Authenticated", "user_id": user_id, "email": email})
         
+        logger.warning("❌ No active session found")
         return Response({"status": "Unauthorized"}, status=401)

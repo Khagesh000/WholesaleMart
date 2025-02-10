@@ -4,15 +4,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import Homepage from "./pages/Homepage";
-import VendorRegistration from "./components/VendorRegistration";
-import Login from "./components/Headersplit/Login";
+import VenderDashboard from "./pages/VenderDashboard";
+import UserLogin from "./pages/UserLogin";
 import Header from "./components/Header"; // Global Header
 
 export default function App() {
   const location = useLocation(); // Get the current path
 
   // Hide Header on Vendor Registration and Login pages
-  const hideHeader = location.pathname === "/vendor-registration" || location.pathname === "/login" || location.pathname === "/";
+  const hideHeader = location.pathname === "/vender-dashboard" || location.pathname === "/user-login" || location.pathname === "/";
 
   return (
     <>
@@ -20,8 +20,8 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<Homepage />} /> {/* Ensure Homepage loads only once */}
-        <Route path="/vendor-registration" element={<VendorRegistration />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/vender-dashboard" element={<VenderDashboard />} />
+        <Route path="/user-login" element={<UserLogin />} />
       </Routes>
     </>
   );
