@@ -13,6 +13,14 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authentication import SessionAuthentication
 
+from rest_framework import status
+from .models import Vendor
+from .serializers import VendorSerializer
+from rest_framework.decorators import api_view,  permission_classes
+
+
+
+
 logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -149,3 +157,27 @@ class CheckSessionView(APIView):
         
         logger.warning("❌ No active session found")
         return Response({"status": "Unauthorized"}, status=401)
+
+
+
+
+
+#Vendors data
+
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Allow unauthenticated access
+def register_vendor(request):
+    serializer = VendorSerializer(data=request.data)
+    if serializer.is_valid():
+        vendor = serializer.save()
+        print(f"✅ Vendor '{vendor.shopName}' Registered Successfully!")  # Console message
+        return Response({"message": "Vendor registered successfully!"}, status=status.HTTP_201_CREATED)
+    
+    print("❌ Registration Failed:", serializer.errors)  # Debugging
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def list_vendors(request):
+    vendors = Vendor.objects.all()
+    serializer = VendorSerializer(vendors, many=True)
+    return Response(serializer.data)

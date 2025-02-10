@@ -84,6 +84,15 @@
   text-align: center;
 }
 
+.form-label {
+  width: 250px;
+  font-size: 14px;
+  font-weight: bold;
+  color: grey;
+  font-family: "Arial", sans-serif;
+}
+
+
 /* Back Button */
 .vendorform-btn-back {
   background: #6c757d;
