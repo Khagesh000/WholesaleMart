@@ -29,7 +29,12 @@ export default function VendorForm() {
       if (!formData.firstName.trim()) newErrors.firstName = "First Name is required.";
       if (!formData.lastName.trim()) newErrors.lastName = "Last Name is required.";
       if (!formData.mobile.match(/^\d{10}$/)) newErrors.mobile = "Enter a valid 10-digit mobile number.";
-      if (otpSent && !formData.otp) newErrors.otp = "Please enter the OTP.";
+      if (otpSent && !formData.otp.trim()) {
+        newErrors.otp = "Please enter the OTP.";
+      } else if (!otpSent) {
+        newErrors.otp = "Please click 'Send OTP' before proceeding.";
+      }
+  
       if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors.email = "Enter a valid email address.";
     }
   

@@ -13,11 +13,15 @@ export default function Step1({ formData, errors, handleChange, sendOtp, otpSent
       <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} className="vendorform-input" />
       {errors.lastName && <p className="error-text">{errors.lastName}</p>}
 
-
-      <input type="tel" name="mobile" placeholder="Mobile Number" value={formData.mobile} onChange={handleChange} className="vendorform-input" />
-      <button onClick={sendOtp} className="vendorform-btn">Send OTP</button>
+      {/* Mobile Number & Send OTP */}
+      <div>
+        <input type="tel" name="mobile" placeholder="Mobile Number" value={formData.mobile} onChange={handleChange} className="vendorform-input" />
+        <button onClick={sendOtp} className="otp-btn">Send OTP</button>
+      </div>
       {errors.mobile && <p className="error-text">{errors.mobile}</p>}
+      {!otpSent && errors.otp && <p className="error-text">{errors.otp}</p>}
 
+      {/* OTP Input (only shows if OTP is sent) */}
       {otpSent && (
         <>
           <input type="text" name="otp" placeholder="Enter OTP" value={formData.otp} onChange={handleChange} className="vendorform-input" />
@@ -25,9 +29,11 @@ export default function Step1({ formData, errors, handleChange, sendOtp, otpSent
         </>
       )}
 
+      {/* Email Address */}
       <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} className="vendorform-input" />
       {errors.email && <p className="error-text">{errors.email}</p>}
 
+      {/* Next Button */}
       <button onClick={nextStep} className="vendorform-btn">Next</button>
     </div>
   );
