@@ -1,94 +1,106 @@
 import React, { useState } from "react";
- // External CSS
+import Step1 from "./Step1";
+import Step2 from "./Step2";
 
 export default function VendorForm() {
   const [step, setStep] = useState(1);
-  const [mobile, setMobile] = useState("");
-  const [otp, setOtp] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    shopName: "",
+    shopAddress: "",
+    pincode: "",
+    mobile: "",
+    otp: "",
+    email: "",
+    businessType: "",
+    shopDescription: "",
+    panNumber: "",
+    gstNumber: "",
+  });
+
+  const [errors, setErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
+
+  const validateStep = () => {
+    let newErrors = {};
   
-  // Simulated OTP send function
-  const sendOtp = () => {
-    if (mobile.length === 10) {
-      setOtpSent(true);
-      alert("OTP sent to your mobile number!");
-    } else {
-      alert("Enter a valid 10-digit mobile number!");
+    if (step === 1) {
+      if (!formData.firstName.trim()) newErrors.firstName = "First Name is required.";
+      if (!formData.lastName.trim()) newErrors.lastName = "Last Name is required.";
+      if (!formData.mobile.match(/^\d{10}$/)) newErrors.mobile = "Enter a valid 10-digit mobile number.";
+      if (otpSent && !formData.otp) newErrors.otp = "Please enter the OTP.";
+      if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors.email = "Enter a valid email address.";
     }
+  
+    if (step === 2) {
+      if (!formData.shopName.trim()) newErrors.shopName = "Shop Name is required.";
+      if (!formData.shopAddress.trim()) newErrors.shopAddress = "Shop Address is required.";
+      if (!formData.pincode.match(/^\d{6}$/)) newErrors.pincode = "Enter a valid 6-digit Pincode.";
+      if (!formData.panNumber.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)) newErrors.panNumber = "Enter a valid PAN Number.";
+      if (formData.gstNumber && !formData.gstNumber.match(/^\d{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{3}$/)) {
+        newErrors.gstNumber = "Enter a valid GST Number.";
+      }
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Vendor Registration Completed!");
+  const sendOtp = () => {
+    if (!formData.mobile.match(/^\d{10}$/)) {
+      setErrors({ ...errors, mobile: "Enter a valid 10-digit mobile number." });
+      return;
+    }
+    setOtpSent(true);
+    alert("OTP sent to your mobile number!");
   };
+
+  const nextStep = () => {
+    if (validateStep()) setStep(step + 1);
+  };
+
+  const prevStep = () => setStep(step - 1);
 
   return (
     <div className="vendorform-container">
       <h2 className="vendorform-title">Vendor Registration</h2>
 
-      {/* Step 1: Personal Information */}
+      <div className="step-indicator">
+        {["Personal Info", "Shop & Tax Details", "Confirmation"].map((title, index) => (
+          <div key={index} className={`step ${step >= index + 1 ? "active" : ""}`}>
+            {index + 1}. {title}
+          </div>
+        ))}
+      </div>
+
       {step === 1 && (
-        <div className="vendorform-step">
-          <h3>Step 1: Personal Information</h3>
-          <input type="text" placeholder="Full Name" required className="vendorform-input" />
-          <input type="text" placeholder="Shop Name" required className="vendorform-input" />
-          <input
-            type="tel"
-            placeholder="Mobile Number"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            required
-            className="vendorform-input"
-          />
-          {!otpSent ? (
-            <button onClick={sendOtp} className="vendorform-btn">Send OTP</button>
-          ) : (
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-              className="vendorform-input"
-            />
-          )}
-          <input type="email" placeholder="Email Address" required className="vendorform-input" />
-          <input type="text" placeholder="Pincode" required className="vendorform-input" />
-          <input type="text" placeholder="Address" required className="vendorform-input" />
-          <button onClick={() => setStep(2)} className="vendorform-btn">Next</button>
-        </div>
+        <Step1
+          formData={formData}
+          errors={errors}
+          handleChange={handleChange}
+          sendOtp={sendOtp}
+          otpSent={otpSent}
+          nextStep={nextStep}
+        />
       )}
 
-      {/* Step 2: Shop Details */}
       {step === 2 && (
-        <div className="vendorform-step">
-          <h3>Step 2: Shop Details</h3>
-          <input type="text" placeholder="Business Type" required className="vendorform-input" />
-          <textarea placeholder="Shop Description" required className="vendorform-textarea"></textarea>
-          <button onClick={() => setStep(1)} className="vendorform-btn-back">Back</button>
-          <button onClick={() => setStep(3)} className="vendorform-btn">Next</button>
-        </div>
+        <Step2 formData={formData} errors={errors} handleChange={handleChange} prevStep={prevStep} nextStep={nextStep} />
       )}
 
-      {/* Step 3: Tax Details */}
       {step === 3 && (
         <div className="vendorform-step">
-          <h3>Step 3: Tax Details</h3>
-          <input type="text" placeholder="PAN Number" required className="vendorform-input" />
-          <input type="text" placeholder="GST Number (Optional)" className="vendorform-input" />
-          <button onClick={() => setStep(2)} className="vendorform-btn-back">Back</button>
-          <button onClick={() => setStep(4)} className="vendorform-btn">Next</button>
-        </div>
-      )}
-
-      {/* Step 4: Final Submission */}
-      {step === 4 && (
-        <div className="vendorform-step">
-          <h3>Step 4: Confirmation</h3>
+          <h3>Step 3: Confirmation</h3>
           <p>Please review all details before submitting.</p>
-          <button onClick={() => setStep(3)} className="vendorform-btn-back">Back</button>
-          <button onClick={handleSubmit} className="vendorform-submit-btn">Submit</button>
+          <button onClick={prevStep} className="vendorform-btn-back">Back</button>
+          <button onClick={() => alert("Vendor Registration Completed!")} className="vendorform-submit-btn">Submit</button>
         </div>
       )}
     </div>
