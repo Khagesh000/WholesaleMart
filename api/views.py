@@ -200,22 +200,37 @@ class RegisterVendorView(APIView):
 
 
 # ✅ Check Vendor Session
+# ✅ Check Vendor Session with Full Data
 class VendorSessionView(APIView):
     authentication_classes = [SessionAuthentication]  
     permission_classes = [AllowAny]
 
     def get(self, request):
         vendor_id = request.session.get("vendor_id")
-        email = request.session.get("email")
 
         if vendor_id:
-            return JsonResponse({
-                "loggedIn": True,
-                "vendor_id": vendor_id,
-                "email": email
-            })
+            try:
+                vendor = Vendor.objects.get(id=vendor_id)
+                return JsonResponse({
+                    "loggedIn": True,
+                    "vendor_id": vendor.id,
+                    "firstName": vendor.firstName,
+                    "lastName": vendor.lastName,
+                    "shopName": vendor.shopName,
+                    "shopAddress": vendor.shopAddress,
+                    "pincode": vendor.pincode,
+                    "mobile": vendor.mobile,
+                    "email": vendor.email,
+                    "panNumber": vendor.panNumber,
+                    "shopFullAddress": vendor.shopFullAddress or "",
+                    "gstNumber": getattr(vendor, "gstNumber", ""),  # Handle missing GST field
+                    "businessType": getattr(vendor, "businessType", "")  # Handle missing Business Type
+                })
+            except Vendor.DoesNotExist:
+                return JsonResponse({"loggedIn": False, "message": "Vendor not found."}, status=404)
 
         return JsonResponse({"loggedIn": False})
+
 
 
 # ✅ Vendor Logout

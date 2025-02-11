@@ -17,4 +17,12 @@ class VendorSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Enter a valid PAN Number.")
         return value
 
+    def create(self, validated_data):
+        validated_data.setdefault("gstNumber", "")  # Default to empty if not provided
+        validated_data.setdefault("businessType", "")
+        validated_data.setdefault("shopFullAddress", "")
+
+        return super().create(validated_data)
+
+
 

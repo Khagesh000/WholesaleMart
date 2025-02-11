@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaUser, FaStore, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBusinessTime, FaFileInvoice, FaEdit } from "react-icons/fa";
-import "../assets/css/VendorProfile.css"; // Import the CSS file
+import "../assets/css/VendorProfile.css"; 
 
 const VendorProfile = () => {
     const [vendor, setVendor] = useState(null);
@@ -18,10 +18,13 @@ const VendorProfile = () => {
                         lastName: data.lastName || "Not Provided",
                         shopName: data.shopName || "Not Provided",
                         shopAddress: data.shopAddress || "No Address",
+                        shopFullAddress: data.shopFullAddress || "No Full Address",
                         pincode: data.pincode || "Not Provided",
                         mobile: data.mobile || "Not Provided",
                         email: data.email || "Not Provided",
-                        panNumber: data.panNumber || "Not Provided"
+                        panNumber: data.panNumber || "Not Provided",
+                        gstNumber: data.gstNumber || "Not Provided",
+                        businessType: data.businessType || "Not Provided"
                     });
                 } else {
                     console.warn("⚠️ Vendor not authenticated. Redirecting...");
@@ -55,11 +58,12 @@ const VendorProfile = () => {
                         <div className="vendor-details">
                             <p><FaEnvelope className="icon" /> <strong>Email:</strong> {vendor.email}</p>
                             <p><FaPhone className="icon" /> <strong>Mobile:</strong> {vendor.mobile}</p>
-                            <p><FaBusinessTime className="icon" /> <strong>Business Type:</strong> Not Provided</p>
+                            <p><FaBusinessTime className="icon" /> <strong>Business Type:</strong> {vendor.businessType}</p>
                             <p><FaMapMarkerAlt className="icon" /> <strong>Address:</strong> {vendor.shopAddress}</p>
+                            <p><FaMapMarkerAlt className="icon" /> <strong>Full Address:</strong> {vendor.shopFullAddress}</p>
                             <p><FaMapMarkerAlt className="icon" /> <strong>Pincode:</strong> {vendor.pincode}</p>
                             <p><FaFileInvoice className="icon" /> <strong>PAN Number:</strong> {vendor.panNumber}</p>
-                            <p><FaFileInvoice className="icon" /> <strong>GST Number:</strong> Not Provided</p>
+                            <p><FaFileInvoice className="icon" /> <strong>GST Number:</strong> {vendor.gstNumber}</p>
                         </div>
 
                         {/* Edit Profile Button */}
