@@ -17,24 +17,24 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "wholesalemart.onrender.com"]
 
-# ✅ CORS SETTINGS (Fix CORS Issues)
+# ✅ CORS SETTINGS
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Explicitly allow only specified origins
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",  # React Frontend
+    "http://127.0.0.1:8000",
     "http://localhost:5173",
     "https://wholesalemart.onrender.com"
 ]
 
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
+from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-Requested-With',
-    'Authorization',
-    'Content-Type',
-    'Access-Control-Allow-Origin',
-    'Access-Control-Allow-Credentials',
+    "Authorization",
+    "Access-Control-Allow-Credentials"
 ]
+
 
 
 # ✅ FIX COOP (Google Login Popup Issue)
@@ -54,15 +54,16 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # 🔹 Move this to the top
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",  # ✅ Ensure this is here
+    "corsheaders.middleware.CorsMiddleware",  # ✅ CORS Middleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 
 ROOT_URLCONF = "storemart.urls"
@@ -139,13 +140,17 @@ EMAIL_HOST_PASSWORD = "bczo qwvy cfzq ayqv"
 EMAIL_USE_SSL = False  # Keep this False if using TLS
 
 
-# Session Settings (Long-Lived Sessions)
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False  # Set to True in production
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 365 * 5  # 5 Years (Like Facebook)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_SAVE_EVERY_REQUEST = True  # Extend session on each request
+
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 1 week
+SESSION_ENGINE = "django.contrib.sessions.backends.db"  # ✅ Ensure sessions are stored in DB
+SESSION_COOKIE_NAME = "sessionid"  # ✅ Default Django session cookie name
+SESSION_COOKIE_HTTPONLY = True  # ✅ Prevents JavaScript access
+SESSION_COOKIE_SAMESITE = "None"  # ✅ Allows cross-origin requests
+SESSION_COOKIE_SECURE = True  # ✅ If using HTTPS (set False for localhost testing)
+SESSION_SAVE_EVERY_REQUEST = True  # ✅ Ensure session updates every request
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # ✅ Keep session after closing browser
+
+
 
 
 

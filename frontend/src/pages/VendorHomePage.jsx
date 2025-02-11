@@ -1,9 +1,10 @@
 import React from 'react'
+import VendorHomepageHeader from '../components/VendorHomepageHeader'; 
 
 export default function VendorHomePage() {
   return (
     <div>
-      <h1>Welecome</h1>
+      <VendorHomepageHeader />
     </div>
   )
 }

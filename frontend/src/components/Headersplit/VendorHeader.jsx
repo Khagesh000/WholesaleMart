@@ -8,9 +8,6 @@ export default function VendorHeader() {
       <div className="vendorregistration-left">
         <span className="vendorregistration-logo">Vendor Portal</span>
       </div>
-      <div className="vendorregistration-right">
-        <Link to="/" className="vendorregistration-home-btn">Home</Link>
-      </div>
     </nav>
   );
 }

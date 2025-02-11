@@ -28,7 +28,7 @@ const checkSession = async () => {
             //localStorage.setItem("user", JSON.stringify(res.data));
             //navigate("/user-login");
         } else {
-          localStorage.removeItem("user"); // ❌ Clear storage if not authenticated
+          //localStorage.removeItem("user"); // ❌ Clear storage if not authenticated
           //navigate("/user-login");
         }
     } catch (error) {
@@ -42,7 +42,7 @@ useEffect(() => {
   const user = localStorage.getItem("user");
 
   if (user) {
-      //console.log("🔄 User found in localStorage. Redirecting to /login");
+      console.log("🔄 User found in localStorage. Redirecting to /login");
       // ✅ If user is already logged in, redirect to dashboard
       //navigate("/user-login");
   } else {
@@ -124,7 +124,7 @@ useEffect(() => {
 
       if (res.data.status === "Verified") {
         console.log("✅ OTP Verified Successfully!");
-        //navigate("/user-login");
+        navigate("/user-login");
       } else {
         console.error("❌ OTP is invalid!");
         setError("❌ OTP is invalid! Please try again.");
@@ -153,7 +153,7 @@ useEffect(() => {
     className="signup-btn" 
     onClick={() => {
       console.log("✅ Vendor exists in localStorage. Redirecting to /vendor-homepage...");
-      navigate("/vender-dashboard");
+      navigate("/vendor-homepage");
     }}
   >
     Vendor

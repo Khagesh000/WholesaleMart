@@ -39,7 +39,7 @@ class CSRFExemptSessionAuthentication(SessionAuthentication):
     
 
 class GoogleLoginView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -56,9 +56,9 @@ class GoogleLoginView(APIView):
 
 
             # ✅ Log in user using Django's session system
-            #request.session["user_id"] = user.id
-            #request.session["email"] = email
-            #request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
+            request.session["user_id"] = user.id
+            request.session["email"] = email
+            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
             login(request, user)
             
             logger.info(f"✅ Google Login Success: User {email} logged in with session {request.session.session_key}")
@@ -76,7 +76,7 @@ class GoogleLoginView(APIView):
 
 
 class SendOTPView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -106,7 +106,7 @@ class SendOTPView(APIView):
 
 
 class VerifyOTPView(APIView):
-    #authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -125,9 +125,9 @@ class VerifyOTPView(APIView):
             login(request, user)
 
             # Set session with long expiry
-            #request.session["user_email"] = email
-            #request.session["authenticated"] = True
-            #request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
+            request.session["user_email"] = email
+            request.session["authenticated"] = True
+            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
 
             return Response({"status": "Verified", "message": "OTP is correct"})
 
@@ -137,7 +137,7 @@ class VerifyOTPView(APIView):
 
 
 class LogoutView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
 
     def post(self, request):
         logout(request)
@@ -146,7 +146,7 @@ class LogoutView(APIView):
 
 
 class CheckSessionView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [CSRFExemptSessionAuthentication]
 
     def get(self, request):
         user_id = request.session.get("user_id")
@@ -164,26 +164,30 @@ class CheckSessionView(APIView):
 
 
 #Vendors data
+# ✅ Register Vendor
+from django.contrib.sessions.models import Session
 
+
+# ✅ Register Vendor
 class RegisterVendorView(APIView):
-    #authentication_classes = []
-    permission_classes = []
+    authentication_classes = [SessionAuthentication]  
+    permission_classes = [AllowAny]
 
     def post(self, request):
-        # Log the received data
-        logger.info(f"📩 Received registration data: {request.data}")
-
         serializer = VendorSerializer(data=request.data)
         if serializer.is_valid():
             vendor = serializer.save()
 
-            # ✅ Store session (5 Years Expiry)
-            #request.session["vendor_id"] = vendor.id
-            #request.session["email"] = vendor.email
-            #request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years
+            # ✅ Store vendor details in the session
+            request.session["vendor_id"] = vendor.id
+            request.session["email"] = vendor.email
+            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 years
 
-            logger.info(f"✅ Vendor {vendor.email} registered (Session: {request.session.session_key})")
+            # ✅ Force session save
+            request.session.modified = True  
+            request.session.save()
 
+            logger.info(f"✅ Vendor {vendor.email} registered. Session Key: {request.session.session_key}")
             return Response({
                 "message": "Vendor registered successfully!",
                 "redirect": "/vendor-homepage",
@@ -191,14 +195,13 @@ class RegisterVendorView(APIView):
                 "email": vendor.email
             }, status=status.HTTP_201_CREATED)
 
-        # ❌ Log and return errors
         logger.error(f"❌ Registration failed: {serializer.errors}")
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# ✅ Check if Vendor is Logged In (Class-Based)
+# ✅ Check Vendor Session
 class VendorSessionView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [SessionAuthentication]  
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -215,21 +218,21 @@ class VendorSessionView(APIView):
         return JsonResponse({"loggedIn": False})
 
 
-# ✅ Vendor Logout (Class-Based)
+# ✅ Vendor Logout
 class LogoutVendorView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [SessionAuthentication]
 
     def post(self, request):
         logout(request)
-        request.session.flush()  # ✅ Clear session completely
+        request.session.flush()  # ✅ Clears session completely
         logger.info("✅ Vendor logged out successfully")
 
         return JsonResponse({"message": "Logged out successfully", "redirect": "/"}, status=200)
 
 
-# ✅ Send OTP to Email (Class-Based)
+# ✅ Send OTP to Email
 class VendorSendOTPView(APIView):
-    #authentication_classes = [CSRFExemptSessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -249,16 +252,17 @@ class VendorSendOTPView(APIView):
                 recipient_list=[email],
                 fail_silently=False,
             )
+            logger.info(f"📤 OTP sent to {email}: {otp}")
             return Response({"status": "OTP Sent", "email": email})
 
         except Exception as e:
-            logger.error(f"Error sending OTP: {str(e)}")
+            logger.error(f"❌ Error sending OTP: {str(e)}")
             return Response({"status": "Failed", "message": "Error sending OTP"}, status=500)
 
 
-# ✅ Verify OTP (Class-Based)
+# ✅ Verify OTP
 class VendorVerifyOTPView(APIView):
-    #authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -272,6 +276,8 @@ class VendorVerifyOTPView(APIView):
 
         if str(otp_stored) == str(otp_received):
             cache.delete(email)  # ✅ OTP verified, remove from cache
+            logger.info(f"✅ OTP verified for {email}")
             return Response({"status": "Success", "message": "OTP verified successfully!"})
 
+        logger.warning(f"⚠️ Invalid OTP attempt for {email}")
         return Response({"status": "Failed", "message": "Invalid OTP or expired"}, status=400)

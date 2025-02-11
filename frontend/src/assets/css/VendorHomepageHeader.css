@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.vendorregistration-navbar {
+    background: linear-gradient(135deg, #705957, #c60f21);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.vendorregistration-left {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.vendorregistration-menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.vendorregistration-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.vendorregistration-right.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    width: 200px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.vendorregistration-home-btn {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.vendorregistration-products,
+.vendorregistration-notifications,
+.vendorregistration-profile {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.vendorregistration-products .icon,
+.vendorregistration-notifications .icon,
+.vendorregistration-profile .icon {
+    font-size: 1.2rem;
+}
+
+.vendorregistration-notifications {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 0.8rem;
+    padding: 2px 5px;
+    border-radius: 50%;
+}
+
+.profile-img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.logout-btn {
+    background: #9e0c1a;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background: #c60f21;
+}
+
+.vendorregistration-profile {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Keep the default text color */
+    cursor: pointer;
+  }
+  
+  .vendorregistration-profile .icon,
+  .vendorregistration-profile img {
+    width: 30px; /* Adjust profile image size */
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px; /* Add spacing between icon and text */
+  }
+  
+  .vendorregistration-profile span {
+    font-weight: 500; /* Keep text style consistent */
+  }
+  
+
+/* Responsive */
+@media (max-width: 768px) {
+    .vendorregistration-menu-toggle {
+        display: block;
+    }
+
+    .vendorregistration-right {
+        display: none;
+    }
+
+    .vendorregistration-right.open {
+        display: flex;
+    }
+}

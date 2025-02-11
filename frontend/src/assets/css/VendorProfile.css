@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.vendor-profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #2b5876, #4e4376);
+    font-family: 'Poppins', sans-serif;
+}
+
+.vendor-profile-card {
+    background: white;
+    width: 350px;
+    padding: 25px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.vendor-profile-card:hover {
+    transform: scale(1.03);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-pic-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4e4376;
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-pic:hover {
+    transform: scale(1.1);
+}
+
+.default-profile-icon {
+    font-size: 100px;
+    color: #4e4376;
+}
+
+.vendor-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 10px;
+}
+
+.vendor-shop {
+    font-size: 1rem;
+    color: #777;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.vendor-details {
+    margin-top: 15px;
+    text-align: left;
+}
+
+.vendor-details p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: #555;
+    padding: 5px 0;
+}
+
+.vendor-details .icon {
+    color: #4e4376;
+    font-size: 1.2rem;
+}
+
+.edit-profile-btn {
+    background: #4e4376;
+    color: white;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 15px;
+    transition: background 0.3s ease-in-out;
+}
+
+.edit-profile-btn:hover {
+    background: #2b5876;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+    .vendor-profile-card {
+        width: 90%;
+        padding: 20px;
+    }
+}
