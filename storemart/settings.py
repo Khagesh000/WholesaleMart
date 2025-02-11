@@ -15,7 +15,7 @@ SECRET_KEY = "django-insecure-4fzg@7(&m0g&d@kd7lx%katpzp63q!nr)w@1&+%y*u+qo1%r4e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "wholesalemart.onrender.com"]
 
 # ✅ CORS SETTINGS (Fix CORS Issues)
 CORS_ALLOW_CREDENTIALS = True
@@ -23,12 +23,10 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",  # React Frontend
     "http://localhost:5173",
+    "https://wholesalemart.onrender.com"
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-Requested-With',
