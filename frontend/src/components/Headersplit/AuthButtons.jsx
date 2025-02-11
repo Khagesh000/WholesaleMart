@@ -25,16 +25,16 @@ const checkSession = async () => {
         const res = await axios.get("http://127.0.0.1:8000/api/check-session/");
         console.log("Session Check Response:", res.data);
         if (res.data.status === "Authenticated") {
-            localStorage.setItem("user", JSON.stringify(res.data));
-            navigate("/user-login");
+            //localStorage.setItem("user", JSON.stringify(res.data));
+            //navigate("/user-login");
         } else {
           localStorage.removeItem("user"); // ❌ Clear storage if not authenticated
-          navigate("/user-login");
+          //navigate("/user-login");
         }
     } catch (error) {
         console.error("Session Error:", error);
-        localStorage.removeItem("user"); // ❌ Clear session on error
-        navigate("/user-login");
+        //localStorage.removeItem("user"); // ❌ Clear session on error
+        //navigate("/user-login");
     }
 };
 
@@ -42,12 +42,12 @@ useEffect(() => {
   const user = localStorage.getItem("user");
 
   if (user) {
-    console.log("🔄 User found in localStorage. Redirecting to /login");
+      //console.log("🔄 User found in localStorage. Redirecting to /login");
       // ✅ If user is already logged in, redirect to dashboard
-      navigate("/user-login");
+      //navigate("/user-login");
   } else {
       console.log("🔄 Checking Django session...");
-      checkSession(); // ✅ Otherwise, check Django session
+      //checkSession(); // ✅ Otherwise, check Django session
   }
 
 
@@ -69,8 +69,8 @@ useEffect(() => {
 
       if (res.data.status === "Success") {
         console.log("Google Login Success:", res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
-        navigate("/user-login");
+        //localStorage.setItem("user", JSON.stringify(res.data));
+        //navigate("/user-login");
       } else {
         console.error("Google Login Failed:", res.data.message);
         setError("Google login failed.");
@@ -84,9 +84,9 @@ useEffect(() => {
   const handleLogout = () => {
     axios.post("http://127.0.0.1:8000/api/logout/")
         .then(() => {
-            localStorage.removeItem("user"); // ❌ Clear storage
+            //localStorage.removeItem("user"); // ❌ Clear storage
             console.log("✅ User logged out. Redirecting to /login");
-            navigate("/user-login"); // 🔄 Redirect to login
+            //navigate("/user-login"); // 🔄 Redirect to login
         })
         .catch(error => console.error("🚨 Logout Error:", error));
 };
@@ -124,7 +124,7 @@ useEffect(() => {
 
       if (res.data.status === "Verified") {
         console.log("✅ OTP Verified Successfully!");
-        navigate("/user-login");
+        //navigate("/user-login");
       } else {
         console.error("❌ OTP is invalid!");
         setError("❌ OTP is invalid! Please try again.");
@@ -153,7 +153,7 @@ useEffect(() => {
     className="signup-btn" 
     onClick={() => {
       console.log("✅ Vendor exists in localStorage. Redirecting to /vendor-homepage...");
-      navigate("/vendor-homepage");
+      navigate("/vender-dashboard");
     }}
   >
     Vendor

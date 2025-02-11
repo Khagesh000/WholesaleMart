@@ -56,9 +56,9 @@ export default function VendorForm() {
 
       if (res.data.loggedIn) {
         console.log("✅ Vendor is authenticated, redirecting to /vendor-homepage");
-        localStorage.setItem("vendor", JSON.stringify(res.data));
+        //localStorage.setItem("vendor", JSON.stringify(res.data));
         setIsVendorRegistered(true);
-        navigate("/vendor-homepage");
+        //navigate("/vendor-homepage");
       } else {
         console.log("❌ Vendor not authenticated, showing registration form");
         localStorage.removeItem("vendor");
@@ -76,7 +76,7 @@ export default function VendorForm() {
 
     if (storedVendor) {
       console.log("🟢 Vendor found in localStorage, redirecting to /vendor-homepage");
-      navigate("/vendor-homepage");
+      //navigate("/vendor-homepage");
     } else {
       checkVendorSession();
     }
@@ -125,7 +125,7 @@ export default function VendorForm() {
 
       if (res.data.vendor_id) {
         localStorage.setItem("vendor", JSON.stringify(res.data));
-        navigate("/vendor-homepage");
+        //navigate("/vendor-homepage");
       } else {
         console.error("❌ Registration failed:", res.data.message);
         alert("Registration failed. Please check your inputs.");

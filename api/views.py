@@ -39,7 +39,7 @@ class CSRFExemptSessionAuthentication(SessionAuthentication):
     
 
 class GoogleLoginView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -56,9 +56,9 @@ class GoogleLoginView(APIView):
 
 
             # ✅ Log in user using Django's session system
-            request.session["user_id"] = user.id
-            request.session["email"] = email
-            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
+            #request.session["user_id"] = user.id
+            #request.session["email"] = email
+            #request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
             login(request, user)
             
             logger.info(f"✅ Google Login Success: User {email} logged in with session {request.session.session_key}")
@@ -76,7 +76,7 @@ class GoogleLoginView(APIView):
 
 
 class SendOTPView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -106,7 +106,7 @@ class SendOTPView(APIView):
 
 
 class VerifyOTPView(APIView):
-    authentication_classes = [SessionAuthentication]
+    #authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -125,9 +125,9 @@ class VerifyOTPView(APIView):
             login(request, user)
 
             # Set session with long expiry
-            request.session["user_email"] = email
-            request.session["authenticated"] = True
-            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
+            #request.session["user_email"] = email
+            #request.session["authenticated"] = True
+            #request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years (Like Facebook)
 
             return Response({"status": "Verified", "message": "OTP is correct"})
 
@@ -137,7 +137,7 @@ class VerifyOTPView(APIView):
 
 
 class LogoutView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
 
     def post(self, request):
         logout(request)
@@ -146,7 +146,7 @@ class LogoutView(APIView):
 
 
 class CheckSessionView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
 
     def get(self, request):
         user_id = request.session.get("user_id")
@@ -166,7 +166,7 @@ class CheckSessionView(APIView):
 #Vendors data
 
 class RegisterVendorView(APIView):
-    authentication_classes = []
+    #authentication_classes = []
     permission_classes = []
 
     def post(self, request):
@@ -178,9 +178,9 @@ class RegisterVendorView(APIView):
             vendor = serializer.save()
 
             # ✅ Store session (5 Years Expiry)
-            request.session["vendor_id"] = vendor.id
-            request.session["email"] = vendor.email
-            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years
+            #request.session["vendor_id"] = vendor.id
+            #request.session["email"] = vendor.email
+            #request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years
 
             logger.info(f"✅ Vendor {vendor.email} registered (Session: {request.session.session_key})")
 
@@ -198,7 +198,7 @@ class RegisterVendorView(APIView):
 
 # ✅ Check if Vendor is Logged In (Class-Based)
 class VendorSessionView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -217,7 +217,7 @@ class VendorSessionView(APIView):
 
 # ✅ Vendor Logout (Class-Based)
 class LogoutVendorView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
 
     def post(self, request):
         logout(request)
@@ -229,7 +229,7 @@ class LogoutVendorView(APIView):
 
 # ✅ Send OTP to Email (Class-Based)
 class VendorSendOTPView(APIView):
-    authentication_classes = [CSRFExemptSessionAuthentication]
+    #authentication_classes = [CSRFExemptSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -258,7 +258,7 @@ class VendorSendOTPView(APIView):
 
 # ✅ Verify OTP (Class-Based)
 class VendorVerifyOTPView(APIView):
-    authentication_classes = [SessionAuthentication]
+    #authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
