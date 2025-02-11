@@ -12,5 +12,6 @@ class Vendor(models.Model):
     email = models.EmailField(unique=True)
     panNumber = models.CharField(max_length=10)
 
+
     def __str__(self):
         return self.shopName

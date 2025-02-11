@@ -14,6 +14,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.authentication import SessionAuthentication
 
 from rest_framework import status
+from django.http import JsonResponse
 from .models import Vendor
 from .serializers import VendorSerializer
 from rest_framework.decorators import api_view,  permission_classes
@@ -164,20 +165,113 @@ class CheckSessionView(APIView):
 
 #Vendors data
 
-@api_view(['POST'])
-@permission_classes([AllowAny])  # Allow unauthenticated access
-def register_vendor(request):
-    serializer = VendorSerializer(data=request.data)
-    if serializer.is_valid():
-        vendor = serializer.save()
-        print(f"✅ Vendor '{vendor.shopName}' Registered Successfully!")  # Console message
-        return Response({"message": "Vendor registered successfully!"}, status=status.HTTP_201_CREATED)
-    
-    print("❌ Registration Failed:", serializer.errors)  # Debugging
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class RegisterVendorView(APIView):
+    authentication_classes = []
+    permission_classes = []
 
-@api_view(['GET'])
-def list_vendors(request):
-    vendors = Vendor.objects.all()
-    serializer = VendorSerializer(vendors, many=True)
-    return Response(serializer.data)
+    def post(self, request):
+        # Log the received data
+        logger.info(f"📩 Received registration data: {request.data}")
+
+        serializer = VendorSerializer(data=request.data)
+        if serializer.is_valid():
+            vendor = serializer.save()
+
+            # ✅ Store session (5 Years Expiry)
+            request.session["vendor_id"] = vendor.id
+            request.session["email"] = vendor.email
+            request.session.set_expiry(60 * 60 * 24 * 365 * 5)  # 5 Years
+
+            logger.info(f"✅ Vendor {vendor.email} registered (Session: {request.session.session_key})")
+
+            return Response({
+                "message": "Vendor registered successfully!",
+                "redirect": "/vendor-homepage",
+                "vendor_id": vendor.id,
+                "email": vendor.email
+            }, status=status.HTTP_201_CREATED)
+
+        # ❌ Log and return errors
+        logger.error(f"❌ Registration failed: {serializer.errors}")
+        return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ✅ Check if Vendor is Logged In (Class-Based)
+class VendorSessionView(APIView):
+    authentication_classes = [CSRFExemptSessionAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        vendor_id = request.session.get("vendor_id")
+        email = request.session.get("email")
+
+        if vendor_id:
+            return JsonResponse({
+                "loggedIn": True,
+                "vendor_id": vendor_id,
+                "email": email
+            })
+
+        return JsonResponse({"loggedIn": False})
+
+
+# ✅ Vendor Logout (Class-Based)
+class LogoutVendorView(APIView):
+    authentication_classes = [CSRFExemptSessionAuthentication]
+
+    def post(self, request):
+        logout(request)
+        request.session.flush()  # ✅ Clear session completely
+        logger.info("✅ Vendor logged out successfully")
+
+        return JsonResponse({"message": "Logged out successfully", "redirect": "/"}, status=200)
+
+
+# ✅ Send OTP to Email (Class-Based)
+class VendorSendOTPView(APIView):
+    authentication_classes = [CSRFExemptSessionAuthentication]
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+
+        if not email:
+            return Response({"status": "Failed", "message": "Email is required"}, status=400)
+
+        otp = random.randint(100000, 999999)
+        cache.set(email, otp, timeout=300)  # OTP valid for 5 minutes
+
+        try:
+            send_mail(
+                subject="Your OTP for Verification",
+                message=f"Your OTP code is: {otp}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            return Response({"status": "OTP Sent", "email": email})
+
+        except Exception as e:
+            logger.error(f"Error sending OTP: {str(e)}")
+            return Response({"status": "Failed", "message": "Error sending OTP"}, status=500)
+
+
+# ✅ Verify OTP (Class-Based)
+class VendorVerifyOTPView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        otp_received = request.data.get("otp")
+
+        if not email or not otp_received:
+            return Response({"status": "Failed", "message": "Email and OTP are required"}, status=400)
+
+        otp_stored = cache.get(email)
+
+        if str(otp_stored) == str(otp_received):
+            cache.delete(email)  # ✅ OTP verified, remove from cache
+            return Response({"status": "Success", "message": "OTP verified successfully!"})
+
+        return Response({"status": "Failed", "message": "Invalid OTP or expired"}, status=400)

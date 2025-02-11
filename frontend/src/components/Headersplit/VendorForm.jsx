@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import axios from "axios";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 
@@ -22,6 +23,7 @@ export default function VendorForm() {
 
   const [errors, setErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
+  const [isVendorRegistered, setIsVendorRegistered] = useState(false);
 
   const validateStep = () => {
     let newErrors = {};
@@ -45,18 +47,59 @@ export default function VendorForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // ✅ Check if vendor session exists
+  const checkVendorSession = async () => {
+    try {
+      console.log("🔄 Checking vendor session...");
+      const res = await axios.get("http://127.0.0.1:8000/api/check-vendor-session/", { withCredentials: true });
+      console.log("🟢 Vendor session response:", res.data);
+
+      if (res.data.loggedIn) {
+        console.log("✅ Vendor is authenticated, redirecting to /vendor-homepage");
+        localStorage.setItem("vendor", JSON.stringify(res.data));
+        setIsVendorRegistered(true);
+        navigate("/vendor-homepage");
+      } else {
+        console.log("❌ Vendor not authenticated, showing registration form");
+        localStorage.removeItem("vendor");
+        setIsVendorRegistered(false);
+      }
+    } catch (error) {
+      console.error("🚨 Vendor session check failed:", error);
+      localStorage.removeItem("vendor");
+      setIsVendorRegistered(false);
+    }
+  };
+
+  useEffect(() => {
+    const storedVendor = localStorage.getItem("vendor");
+
+    if (storedVendor) {
+      console.log("🟢 Vendor found in localStorage, redirecting to /vendor-homepage");
+      navigate("/vendor-homepage");
+    } else {
+      checkVendorSession();
+    }
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
+  // ✅ Send OTP
   const sendOtp = () => {
-    if (!formData.mobile.match(/^\d{10}$/)) {
-      setErrors({ ...errors, mobile: "Enter a valid 10-digit mobile number." });
-      return;
-    }
-    setOtpSent(true);
-    alert("OTP sent to your mobile number!");
+    fetch("http://127.0.0.1:8000/api/send-otp-vendor/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setOtpSent(true);
+        alert("OTP sent to your email!");
+      })
+      .catch((error) => console.error("OTP Send Failed:", error));
   };
 
   const nextStep = () => {
@@ -65,43 +108,39 @@ export default function VendorForm() {
 
   const prevStep = () => setStep(step - 1);
 
+  // ✅ Handle Submit Registration
   const handleSubmit = async () => {
-    console.log("Submitting Data:", formData); // Debugging Log
+    if (!validateStep()) return;
+  
+    const sanitizedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [key, value || null]) // Convert empty strings to null
+    );
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      console.log("📤 Submitting vendor registration:", sanitizedFormData);
+      const res = await axios.post("http://127.0.0.1:8000/api/register-vendor/", sanitizedFormData, { withCredentials: true });
   
-      const text = await response.text(); // Read response as text
-      console.log("Raw Response:", text); // Debugging Log
-  
-      let data;
-      try {
-        data = JSON.parse(text); // Try to parse as JSON
-      } catch (error) {
-        console.error("JSON Parse Error:", error);
-        alert("Unexpected server response.");
-        return;
-      }
-  
-      console.log("Server Response:", data); // Debugging Log
-  
-      if (response.ok) {
-        alert("Vendor Registration Successful!");
+      console.log("🟢 Registration successful:", res.data);
+      console.log(localStorage.getItem("vendor"));
+
+      if (res.data.vendor_id) {
+        localStorage.setItem("vendor", JSON.stringify(res.data));
         navigate("/vendor-homepage");
       } else {
-        alert("Error: " + JSON.stringify(data));
+        console.error("❌ Registration failed:", res.data.message);
+        alert("Registration failed. Please check your inputs.");
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
+      console.error("🚨 Registration Error:", error);
+  
+      if (error.response && error.response.data.errors) {
+        console.log("🛑 Backend Errors:", error.response.data.errors);
+        setErrors(error.response.data.errors); // ✅ Show errors in form
+      } else {
+        alert("An error occurred during registration.");
+      }
     }
   };
-  
   
   
 

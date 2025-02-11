@@ -17,6 +17,7 @@ export default function AuthButtons() {
 
 
 
+
 axios.defaults.withCredentials = true; // ✅ This ensures session cookies are sent
 
 const checkSession = async () => {
@@ -25,15 +26,15 @@ const checkSession = async () => {
         console.log("Session Check Response:", res.data);
         if (res.data.status === "Authenticated") {
             localStorage.setItem("user", JSON.stringify(res.data));
-            navigate("/login");
+            navigate("/user-login");
         } else {
           localStorage.removeItem("user"); // ❌ Clear storage if not authenticated
-          navigate("/login");
+          navigate("/user-login");
         }
     } catch (error) {
         console.error("Session Error:", error);
         localStorage.removeItem("user"); // ❌ Clear session on error
-        navigate("/login");
+        navigate("/user-login");
     }
 };
 
@@ -43,11 +44,15 @@ useEffect(() => {
   if (user) {
     console.log("🔄 User found in localStorage. Redirecting to /login");
       // ✅ If user is already logged in, redirect to dashboard
-      navigate("/login");
+      navigate("/user-login");
   } else {
       console.log("🔄 Checking Django session...");
       checkSession(); // ✅ Otherwise, check Django session
   }
+
+
+
+
 }, []);
 
 
@@ -65,7 +70,7 @@ useEffect(() => {
       if (res.data.status === "Success") {
         console.log("Google Login Success:", res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
-        navigate("/login");
+        navigate("/user-login");
       } else {
         console.error("Google Login Failed:", res.data.message);
         setError("Google login failed.");
@@ -81,7 +86,7 @@ useEffect(() => {
         .then(() => {
             localStorage.removeItem("user"); // ❌ Clear storage
             console.log("✅ User logged out. Redirecting to /login");
-            navigate("/login"); // 🔄 Redirect to login
+            navigate("/user-login"); // 🔄 Redirect to login
         })
         .catch(error => console.error("🚨 Logout Error:", error));
 };
@@ -132,12 +137,41 @@ useEffect(() => {
     }
   };
 
+
+
+
+
+
   return (
     <div className="authbuttons-container">
       <div className="authbuttons-wrapper">
-        <button className="signup-btn" onClick={() => navigate("/vender-dashboard")}>
-          Vendor
-        </button>
+
+
+      {localStorage.getItem("vendor") ? (
+  // ✅ If vendor exists in localStorage, go to vendor homepage
+  <button 
+    className="signup-btn" 
+    onClick={() => {
+      console.log("✅ Vendor exists in localStorage. Redirecting to /vendor-homepage...");
+      navigate("/vendor-homepage");
+    }}
+  >
+    Vendor
+  </button>
+) : (
+  // 🔄 If vendor does NOT exist in localStorage, go to vendor registration form
+  <button 
+    className="signup-btn" 
+    onClick={() => {
+      console.log("🚨 Vendor not found in localStorage. Redirecting to /vendor-dashboard for registration...");
+      navigate("/vender-dashboard"); 
+    }}
+  >
+    Vendor
+  </button>
+)}
+
+
 
         {localStorage.getItem("user") ? (
           // ✅ Show Logout button when user is logged in
