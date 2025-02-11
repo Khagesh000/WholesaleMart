@@ -1,5 +1,5 @@
 ﻿web:
 gunicorn
-letterMaking.wsgi
+storemart.wsgi
 --log-file
 -
