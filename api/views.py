@@ -1,6 +1,7 @@
 import os
 import random
 import logging
+import json
 import firebase_admin
 from firebase_admin import auth, credentials
 from django.core.mail import send_mail
@@ -18,7 +19,10 @@ from django.http import JsonResponse
 from .models import Vendor
 from .serializers import VendorSerializer
 from rest_framework.decorators import api_view,  permission_classes
-
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
 
 
 
@@ -296,3 +300,47 @@ class VendorVerifyOTPView(APIView):
 
         logger.warning(f"⚠️ Invalid OTP attempt for {email}")
         return Response({"status": "Failed", "message": "Invalid OTP or expired"}, status=400)
+
+
+
+# ✅ CSRF Token View
+def get_csrf_token(request):
+    return JsonResponse({"csrfToken": get_token(request)})
+
+
+class UpdateVendorProfileView(APIView):
+    authentication_classes = [SessionAuthentication]  
+    permission_classes = [AllowAny]  # 🔹 Allow session-based access without enforcing login
+
+    def post(self, request):
+        vendor_id = request.session.get("vendor_id")  # 🔹 Get vendor ID from session
+
+        if not vendor_id:
+            logger.warning("❌ Unauthorized access attempt")
+            return Response({"status": "Error", "message": "Authentication required"}, status=403)
+
+        try:
+            data = json.loads(request.body)
+            vendor = Vendor.objects.get(id=vendor_id)  # ✅ Fetch vendor using session ID
+
+            # ✅ Update fields using correct camelCase field names
+            vendor.firstName = data.get("firstName", vendor.firstName)
+            vendor.lastName = data.get("lastName", vendor.lastName)
+            vendor.shopName = data.get("shopName", vendor.shopName)
+            vendor.shopAddress = data.get("shopAddress", vendor.shopAddress)
+            vendor.shopFullAddress = data.get("shopFullAddress", vendor.shopFullAddress)
+            vendor.pincode = data.get("pincode", vendor.pincode)
+            vendor.mobile = data.get("mobile", vendor.mobile)
+            vendor.panNumber = data.get("panNumber", vendor.panNumber)
+
+            vendor.save()  # ✅ Save updates
+            return Response({"status": "Success", "message": "Profile updated successfully"})
+
+
+
+        except Vendor.DoesNotExist:
+            return Response({"status": "Error", "message": "Vendor not found"}, status=404)
+
+        except Exception as e:
+            logger.error(f"❌ Error updating profile: {str(e)}")
+            return Response({"status": "Error", "message": str(e)}, status=400)

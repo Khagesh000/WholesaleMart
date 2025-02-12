@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SendOTPView, VerifyOTPView, GoogleLoginView, CheckSessionView, LogoutView, RegisterVendorView, VendorSessionView, LogoutVendorView, VendorSendOTPView, VendorVerifyOTPView
+from .views import SendOTPView, VerifyOTPView, GoogleLoginView, CheckSessionView, LogoutView, RegisterVendorView, VendorSessionView, LogoutVendorView, VendorSendOTPView, VendorVerifyOTPView, UpdateVendorProfileView, get_csrf_token
 
 
 urlpatterns = [
@@ -14,4 +14,6 @@ urlpatterns = [
     path("logout-vendor/", LogoutVendorView.as_view(), name="logout_vendor"),
     path("send-otp-vendor/", VendorSendOTPView.as_view(), name="send_otp_vendor"),
     path("verify-otp-vendor/", VendorVerifyOTPView.as_view(), name="verify_otp_vendor"),
+    path("update-vendor-profile/", UpdateVendorProfileView.as_view(), name="update-vendor-profile"),
+    path("get-csrf-token/", get_csrf_token, name="get-csrf-token"),
 ]
