@@ -23,6 +23,18 @@ export default function VendorHomepageHeader() {
     }
   }, []);
 
+  // Function to close menu on large screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
