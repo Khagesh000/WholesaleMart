@@ -1,0 +1,177 @@
+/* ✅ Container Styling */
+.vendorstockupload-container {
+    max-width: 100%;
+    width: 90%;
+    margin: 40px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    margin-top: 5%;
+}
+
+/* ✅ Header Section */
+.vendorstockupload-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.vendorstockupload-header h1 {
+    font-size: 24px;
+    color: #d62828;
+    margin-bottom: 5px;
+}
+
+.vendorstockupload-header p {
+    font-size: 16px;
+    color: #555;
+}
+
+/* ✅ Step Indicator */
+.vendorstockupload-step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.step {
+    flex: 1;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+    color: #777;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step.active {
+    background: #d62828;
+    color: white;
+}
+
+.step-icon {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+/* ✅ Step Headings (Centered) */
+.step-heading {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #d62828;
+    margin-bottom: 15px;
+}
+
+/* ✅ Form Fields */
+.vendorstockupload-input,
+.vendorstockupload-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.vendorstockupload-textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+/* ✅ File Upload */
+.vendorstockupload-file {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* ✅ Navigation Buttons */
+.vendorstockupload-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.vendorstockupload-btn {
+    background: #d62828;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+.vendorstockupload-btn:hover {
+    background: #a51818;
+    transform: scale(1.05);
+}
+
+.vendorstockupload-back {
+    background: #6c757d;
+}
+
+.vendorstockupload-back:hover {
+    background: #545b62;
+}
+
+.vendorstockupload-file {
+    border: none;
+    background: #f8f9fa;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .vendorstockupload-file:hover {
+    background: #e9ecef;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+/* ✅ Submit Button */
+.vendorstockupload-submit {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    transition: background 0.3s ease-in-out;
+}
+
+.vendorstockupload-submit:hover {
+    background: #218838;
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 768px) {
+    .vendorstockupload-container {
+        width: 95%;
+        margin-top: 13%;
+    }
+}
+
+@media (max-width: 480px) {
+    .vendorstockupload-container {
+        padding: 15px;
+        margin-top: 17%;
+    }
+}

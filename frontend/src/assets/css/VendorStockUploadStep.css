@@ -1,0 +1,72 @@
+
+/* ✅ Upload Box */
+.vendorstockupload-upload-box {
+    border: 2px dashed #d62828;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fff5f5;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.vendorstockupload-upload-box:hover {
+    background: #ffecec;
+}
+
+.vendorstockupload-file-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+    color: #d62828;
+    cursor: pointer;
+}
+
+.upload-icon {
+    font-size: 40px;
+    color: #d62828;
+    margin-bottom: 10px;
+}
+
+/* ✅ Hidden File Input */
+.vendorstockupload-file {
+    display: none;
+}
+
+/* ✅ Navigation Buttons */
+.vendorstockupload-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.vendorstockupload-btn {
+    background: #d62828;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s ease-in-out, transform 0.2s;
+}
+
+.vendorstockupload-btn:hover {
+    background: #a51818;
+    transform: scale(1.05);
+}
+
+.vendorstockupload-back {
+    background: #6c757d;
+}
+
+.vendorstockupload-back:hover {
+    background: #545b62;
+}
+
+
